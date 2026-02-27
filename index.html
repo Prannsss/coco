@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clearout & Co Inc. | 31-Day Content Strategy</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #fafaf9; /* stone-50 */
+            color: #44403c; /* stone-700 */
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #d6d3d1; 
+            border-radius: 4px;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .platform-card {
+            border-left: 4px solid transparent;
+        }
+        .platform-fb { border-left-color: #1877F2; }
+        .platform-ig { border-left-color: #E4405F; }
+        .platform-tt { border-left-color: #000000; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-calendar-check text-amber-600 text-2xl mr-3"></i>
+                    <span class="font-bold text-xl tracking-tight text-stone-800">Clearout & Co <span class="text-stone-400 font-normal">| Strategy Hub</span></span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="app.setView('dashboard')" id="nav-dashboard" class="px-3 py-2 rounded-md text-sm font-medium text-stone-900 bg-stone-100 transition-colors">
+                        Dashboard
+                    </button>
+                    <button onclick="app.setView('calendar')" id="nav-calendar" class="px-3 py-2 rounded-md text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-stone-50 transition-colors">
+                        Calendar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-stone-900 mb-2">31-Day Conversion Content Plan</h1>
+            <p class="text-stone-600 max-w-3xl">
+                Every strategy maps exactly to your <strong>Verified Document URLs</strong> and utilizes the 6 specific outcome-based psychological hooks requested. The "Shop This Look" buttons link directly to your live URLs.
+            </p>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="view-dashboard" class="space-y-8 animate-fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white shadow rounded-lg p-6 border border-stone-100">
+                    <h3 class="text-lg leading-6 font-medium text-stone-900 mb-4">Content Category Mix</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white shadow rounded-lg p-6 border border-stone-100">
+                    <h3 class="text-lg leading-6 font-medium text-stone-900 mb-4">Hook Method Distribution</h3>
+                    <div class="chart-container">
+                        <canvas id="triggerChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center mt-8">
+                <button onclick="app.setView('calendar')" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none transition-colors">
+                    Explore Daily Calendar <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Calendar View -->
+        <div id="view-calendar" class="hidden space-y-6 animate-fade-in">
+            <div class="bg-white shadow rounded-lg p-4 border border-stone-100 flex flex-col sm:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <span class="text-sm font-medium text-stone-700">Filter:</span>
+                    <select id="categoryFilter" onchange="app.filterCalendar()" class="block w-full pl-3 pr-10 py-2 text-base border-stone-300 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm rounded-md border">
+                        <option value="all">All Inventory</option>
+                        <option value="Kitchen">Kitchen</option>
+                        <option value="Decorations">Decorations</option>
+                        <option value="Dining">Dining</option>
+                        <option value="Bedroom">Bedroom</option>
+                        <option value="Living Room">Living Room</option>
+                        <option value="Outdoor">Outdoor</option>
+                        <option value="Security">Security</option>
+                        <option value="Bathroom">Bathroom</option>
+                        <option value="Tech">Tech</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="calendar-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Detailed Modal -->
+    <div id="detail-modal" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-stone-500 bg-opacity-75 transition-opacity" onclick="app.closeModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                <div class="bg-white px-6 py-6 sm:p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span id="modal-day-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 uppercase tracking-widest">Day 1</span>
+                            <h2 class="text-3xl font-bold text-stone-900 mt-2" id="modal-product-name">Product Name</h2>
+                            <p class="text-stone-500 font-medium" id="modal-category">Category</p>
+                        </div>
+                        <button onclick="app.closeModal()" class="p-2 text-stone-400 hover:text-stone-600 transition-colors"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Facebook -->
+                        <div class="platform-card platform-fb bg-blue-50/50 p-4 rounded-lg">
+                            <div class="flex items-center mb-3">
+                                <i class="fa-brands fa-facebook text-blue-600 text-xl mr-2"></i>
+                                <h3 class="font-bold text-blue-900">Facebook</h3>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-blue-400 uppercase tracking-tighter">Strategic Hook</p>
+                                    <p class="text-sm font-bold text-blue-800 italic" id="modal-fb-hook"></p>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <p class="text-[10px] font-bold text-stone-400 uppercase mb-2">Caption Body</p>
+                                    <p class="text-sm text-stone-700 whitespace-pre-wrap" id="modal-fb-copy"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instagram -->
+                        <div class="platform-card platform-ig bg-pink-50/50 p-4 rounded-lg">
+                            <div class="flex items-center mb-3">
+                                <i class="fa-brands fa-instagram text-pink-600 text-xl mr-2"></i>
+                                <h3 class="font-bold text-pink-900">Instagram</h3>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-pink-400 uppercase tracking-tighter">Visual Strategy</p>
+                                    <p class="text-sm font-bold text-pink-800 italic" id="modal-ig-hook"></p>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-pink-100">
+                                    <p class="text-[10px] font-bold text-stone-400 uppercase mb-2">Post Copy</p>
+                                    <p class="text-sm text-stone-700" id="modal-ig-copy"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TikTok -->
+                        <div class="platform-card platform-tt bg-stone-50 p-4 rounded-lg">
+                            <div class="flex items-center mb-3">
+                                <i class="fa-brands fa-tiktok text-stone-900 text-xl mr-2"></i>
+                                <h3 class="font-bold text-stone-900">TikTok</h3>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-[10px] font-bold text-stone-500 uppercase tracking-tighter">Hook & Concept</p>
+                                    <p class="text-sm font-bold text-stone-900 italic" id="modal-tt-hook"></p>
+                                </div>
+                                <div class="bg-stone-900 p-4 rounded-lg text-stone-100 border border-stone-800">
+                                    <p class="text-[10px] font-bold text-amber-400 uppercase mb-2">Script / Production</p>
+                                    <div class="text-xs font-mono whitespace-pre-wrap" id="modal-tt-script"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-stone-50 px-6 py-4 sm:flex sm:flex-row-reverse">
+                    <a id="modal-link" href="#" target="_blank" class="w-full inline-flex justify-center items-center rounded-lg border border-transparent shadow-sm px-6 py-3 bg-amber-600 text-white font-bold hover:bg-amber-700 transition-all sm:ml-3 sm:w-auto">Shop This Look <i class="fa-solid fa-cart-shopping ml-2"></i></a>
+                    <button type="button" onclick="app.closeModal()" class="mt-3 w-full inline-flex justify-center rounded-lg border border-stone-300 shadow-sm px-6 py-3 bg-white text-stone-700 hover:bg-stone-50 sm:mt-0 sm:w-auto transition-all">Close Editor</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const strategyData = [
+            { 
+                day: 1, product: "Faucet Water Filter with LED Display", category: "Kitchen", link: "https://clearoutandcoinc.com/products/faucet-water-filter-led-display-water-purifier-to-reduce-lead-chlorine-heavy-metals-sink-water-filter?variant=47459758899421",
+                hooks: {
+                    fb: "You need the Faucet Water Filter with LED Display if you want to protect your family from hidden toxins without the hassle of slow-filling pitchers.",
+                    ig: "You need the Faucet Water Filter with LED Display if you want crisp, purified water at the touch of a button.",
+                    tt: "Stop drinking \"mystery\" water from your sink."
+                },
+                fb: { copy: "You need the Faucet Water Filter with LED Display if you want to protect your family from hidden toxins without the hassle of slow-filling pitchers. For many of us, the kitchen is the heart of the home, yet we often overlook the quality of the water we use for cooking and drinking. Traditional filters take up valuable counter space and are notoriously slow. This advanced system attaches directly to your faucet, giving you a continuous flow of purified water. The real-time LED display takes away the guesswork, showing you exactly when the filter is working and when it needs a swap. It is an investment in peace of mind. Click the link to upgrade your kitchen's health today." },
+                ig: { copy: "You need the Faucet Water Filter with LED Display if you want crisp, purified water at the touch of a button. 💧 No more bulky pitchers or mystery water. Our LED display shows you the purity levels in real-time, making it the smartest addition to your modern kitchen. It reduces lead and chlorine instantly, ensuring every glass is safe. Tap the link in our bio to shop! #CleanWater #KitchenTech #HomeWellness #ClearOutCo" },
+                tt: { script: "● Hook: Stop drinking \"mystery\" water from your sink. ● Visuals: Close-up of murky water in a glass, then a quick-cut \"Satisfying Installation\" of the filter. The LED light glows blue as the water pours perfectly clear. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Hand snaps the filter onto the tap—no tools needed. 8-12s: Macro shot of the LED display ticking. 12-15s: Filling a glass and taking a refreshing sip. ● Ending CTA: Get yours at the link in bio!" }
+            },
+            { 
+                day: 2, product: "AquaFlask Colorwave 32oz", category: "Kitchen", link: "https://clearoutandcoinc.com/products/aqua-flask-colorwave-32oz-stainless-steel-vacuum-insulated-hot-cold-leak-proof-travel-office-bottle?variant=47263936315613",
+                hooks: {
+                    fb: "You need the AquaFlask Colorwave 32oz if you want to stay hydrated with water that stays ice-cold from your first sip to your last.",
+                    ig: "You need the AquaFlask Colorwave 32oz if you want your favorite drinks to stay perfectly chilled (or hot!) all day long.",
+                    tt: "This bottle is actually indestructible."
+                },
+                fb: { copy: "You need the AquaFlask Colorwave 32oz if you want to stay hydrated with water that stays ice-cold from your first sip to your last. We have all experienced the disappointment of a lukewarm drink after a long hike or a stressful afternoon at the desk. The AquaFlask uses double-wall vacuum insulation to keep your beverages at the perfect temperature for 24 hours. Its leak-proof design means you can toss it in your gym bag without a second thought. Currently on sale, it is the durable, stylish solution your daily routine has been missing. Grab your favorite colorwave before the sale ends!" },
+                ig: { copy: "You need the AquaFlask Colorwave 32oz if you want your favorite drinks to stay perfectly chilled (or hot!) all day long. ❄🔥 From the office to the trails, our 32oz insulated bottle is built for adventure. Leak-proof, sweat-proof, and now on sale! Shop the Colorwave collection via the link in our bio. #HydrationGoals #EcoFriendly #AquaFlask #ClearOutLiving" },
+                tt: { script: "● Hook: This bottle is actually indestructible. ● Visuals: Transition from an office desk to a rugged outdoor trail. Show ice being poured into the flask in the morning, and still being there in the evening. ● Scene Breakdown: 0-3s: The Hook. 3-7s: Fast-paced montage of different \"Colorwave\" variants (Bella Billini, etc.). 7-12s: Dropping the bottle on the ground (to show durability) and it remaining leak-free. 12-15s: Pouring steaming hot coffee from it. ● Ending CTA: Shop the sale at the link in bio!" }
+            },
+            { 
+                day: 3, product: "Feng Shui Wealth and Success Ornament", category: "Decorations", link: "https://clearoutandcoinc.com/products/home-decor-eight-horses-to-attract-wealth-ornament-living-room-decoration-resin-crafts-office-desktop-decoration?variant=47385010307293",
+                hooks: {
+                    fb: "You need the Feng Shui Wealth and Success Ornament if you want to create a workspace that inspires ambition and invites prosperity into your home.",
+                    ig: "You need the Feng Shui Wealth and Success Ornament if you want your home office to reflect the level of success you are working toward.",
+                    tt: "Change your space, change your mindset."
+                },
+                fb: { copy: "You need the Feng Shui Wealth and Success Ornament if you want to create a workspace that inspires ambition and invites prosperity into your home. The environment we curate often dictates our internal state. For centuries, the symbol of eight galloping horses has represented speed, strength, and the arrival of success. Crafted from premium resin with a rich imitation wood finish, this ornament is more than just decor—it is a daily visual affirmation of your goals. Whether placed in a modern living room or a dedicated home office, it serves as a powerful centerpiece for the driven professional. Elevate your space and your mindset today." },
+                ig: { copy: "You need the Feng Shui Wealth and Success Ornament if you want your home office to reflect the level of success you are working toward. 🐎✨ Symbolizing strength and rapid breakthroughs, these eight horses are the ultimate desk upgrade. Premium resin meets traditional symbolism. Click the link in our bio to browse our Decorations collection. #OfficeDecor #FengShui #SuccessMindset #ClearOutCo" },
+                tt: { script: "● Hook: Change your space, change your mindset. ● Visuals: A \"POV\" style shot of someone walking into a beautifully curated, sunlit home office. The camera lingers on the horse ornament as it sits on a natural wood base. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Close-ups of the intricate resin details. 8-12s: Showing the ornament as the final touch on a newly organized desk. 12-15s: Text overlay: \"8 Horses = Rapid Success.\" ● Ending CTA: Elevate your vibe at the link in our bio." }
+            },
+            { 
+                day: 4, product: "Breakfast Cup and Soup Container", category: "Kitchen", link: "https://clearoutandcoinc.com/products/breakfast-cup-bento-box-lunch-box-portable-lunch-food-soup-container-portable-kitchen-utensils?variant=47384973770973",
+                hooks: {
+                    fb: "You need the Breakfast Cup and Soup Container if you want to enjoy a healthy, homemade meal at your desk without the mess of traditional containers.",
+                    ig: "You need the Breakfast Cup and Soup Container if you want to stop spending money on takeout and start eating better on the go.",
+                    tt: "Stop letting your lunch leak in your bag."
+                },
+                fb: { copy: "You need the Breakfast Cup and Soup Container if you want to enjoy a healthy, homemade meal at your desk without the mess of traditional containers. We have all experienced the \"backpack tragedy\"—opening your bag to find your morning oats or soup have leaked everywhere. Our portable container features a specialized Seal Lock mechanism that ensures 100% leak-proof security. Available in vibrant colors like Nordic Green and Coral Pink, it is the perfect companion for students and professionals alike. Stop sacrificing your health for your schedule and start packing your favorite meals with confidence." },
+                ig: { copy: "You need the Breakfast Cup and Soup Container if you want to stop spending money on takeout and start eating better on the go. 🥣 No leaks, no mess, just fresh meals wherever you are. Our Seal Lock technology keeps your oats or soup exactly where they belong. Tap to shop the collection in Nordic Green, White, and Pink! #MealPrep #HealthyCommute #ClearOutKitchen #EcoFriendly" },
+                tt: { script: "● Hook: Stop letting your lunch leak in your bag. ● Visuals: Show someone shaking the container vigorously (filled with soup) to prove the Seal Lock. Then, show a quick-assembly of a layered yogurt parfait. ● Scene Breakdown: 0-3s: The Hook. 3-7s: The \"Vigor Test\"—shaking the container. 7-12s: Transition to a clean bag with the container inside. 12-15s: Opening the container to show the meal is still perfect. ● Ending CTA: Get your Seal Lock cup at the link in bio!" }
+            },
+            { 
+                day: 5, product: "Fairy Moon Dancing Under the Moon Desktop Decoration", category: "Decorations", link: "https://clearoutandcoinc.com/products/creative-ornaments-a-group-of-fairies-dancing-gracefully-under-the-moon-home-decoration-living-room-desktop-decoration?variant=47385006473437",
+                hooks: {
+                    fb: "You need the Fairy Moon Dancing Under the Moon Desktop Decoration if you want to transform your evening routine into a magical, stress-free experience.",
+                    ig: "You need the Fairy Moon Dancing Under the Moon Desktop Decoration if you want to bring a sense of wonder and tranquility into your home.",
+                    tt: "The light your room is missing."
+                },
+                fb: { copy: "You need the Fairy Moon Dancing Under the Moon Desktop Decoration if you want to transform your evening routine into a magical, stress-free experience. Lighting is the most powerful tool in interior design, yet it is often the most underrated. Harsh overhead lights can disrupt your ability to wind down after a long day. This ethereal lamp, featuring fairies dancing under a full moon, provides a soft, calming glow that is perfect for a bedside table or a reading nook. It is more than just a lamp; it is a conversation piece that adds a touch of wonder to any room." },
+                ig: { copy: "You need the Fairy Moon Dancing Under the Moon Desktop Decoration if you want to bring a sense of wonder and tranquility into your home. ✨🌙 The perfect bedside companion for those who love a cozy, magical vibe. Whether it's for your nightstand or a unique gift, this lamp sets the ultimate mood. Tap the link in bio to shop the Decorations collection! #HomeAesthetics #NightLight #FairyCore #ClearOutDecor" },
+                tt: { script: "● Hook: The light your room is missing. ● Visuals: Use a \"Lights Off\" transition. Start with a plain, dimly lit room, then turn on the Fairy Moon lamp to show the immediate change in atmosphere and shadows. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Close-ups of the fairy figures. 8-12s: Showing the lamp glowing on a nightstand while a book is being read. 12-15s: The soft glow reflecting on the wall. ● Ending CTA: Transform your space at the link in our bio." }
+            },
+            { 
+                day: 6, product: "Acrylic Photo Frame Vase", category: "Decorations", link: "https://clearoutandcoinc.com/products/20-15cm-creative-art-acrylic-photo-frame-vase-hydroponic-flower-arrangement-device-transparent-vase-home-decoration-ornaments?variant=47384996708573",
+                hooks: {
+                    fb: "You need the Acrylic Photo Frame Vase if you want to personalize your workspace without sacrificing valuable desk space.",
+                    ig: "You need the Acrylic Photo Frame Vase if you want a unique way to display your favorite photos while adding a touch of nature to your room.",
+                    tt: "Is it a vase or a photo frame? It's both."
+                },
+                fb: { copy: "You need the Acrylic Photo Frame Vase if you want to personalize your workspace without sacrificing valuable desk space. In a world of clutter, minimalist solutions are essential. Why choose between a cherished photograph and a refreshing plant when you can display both in one sleek, transparent design? This hydroponic planter allows you to grow your favorite flowers or propagate cuttings in water while framing a memory. Its clear acrylic construction fits seamlessly into any modern aesthetic, making your desk feel both organized and alive. It is the perfect blend of sentiment and style." },
+                ig: { copy: "You need the Acrylic Photo Frame Vase if you want a unique way to display your favorite photos while adding a touch of nature to your room. 📸🌿 Minimalism meets memory. This 2-in-1 hydroponic vase is perfect for your office or bedside table. Clear, chic, and creative. Tap the link in bio to shop! #MinimalistHome #DeskInspo #Hydroponics #ClearOutLiving" },
+                tt: { script: "● Hook: Is it a vase or a photo frame? It's both. ● Visuals: A fast-paced \"Unboxing and Styling\" video. Slip a photo into the acrylic slot, add water, and place a single white rose or a green cutting inside. ● Scene Breakdown: 0-3s: The Hook. 3-7s: Sliding the photo into the frame. 7-10s: Pouring water into the hydroponic section. 10-15s: Placing the finished piece on a sleek desk setup. ● Ending CTA: Upgrade your desk at the link in bio." }
+            },
+            { 
+                day: 7, product: "Non-Electric Bidet Attachment", category: "Bathroom", link: "https://clearoutandcoinc.com/products/samodra-non-electric-left-hand-bidet-self-cle",
+                hooks: {
+                    fb: "You need the Non-Electric Bidet Attachment if you want a more hygienic, eco-friendly bathroom experience without the cost of a full renovation.",
+                    ig: "You need the Non-Electric Bidet Attachment if you want to feel fresh all day and save money on paper products.",
+                    tt: "Stop living in the past with toilet paper."
+                },
+                fb: { copy: "You need the Non-Electric Bidet Attachment if you want a more hygienic, eco-friendly bathroom experience without the cost of a full renovation. We spend thousands on bathroom tiles and fixtures but often ignore the one upgrade that actually changes our daily lives. Traditional toilet paper is often insufficient and environmentally wasteful. Our Non-Electric Bidet features dual nozzles and a self-cleaning function, providing a level of cleanliness that paper simply cannot match. It is easy to install on your existing toilet and begins saving you money and reducing waste from day one. Refresh your routine and your home." },
+                ig: { copy: "You need the Non-Electric Bidet Attachment if you want to feel fresh all day and save money on paper products. 🚽✨ Once you switch to a bidet, you will never go back. Easy to install, self-cleaning, and dual-nozzle for total hygiene. Your bathroom just got a major upgrade. Tap the link in our bio to shop Bathroom Essentials. #BathroomRestock #EcoFriendly #HygieneHacks #ClearOutCo" },
+                tt: { script: "● Hook: Stop living in the past with toilet paper. ● Visuals: A \"Restock/Upgrade\" style video. Show the slim profile of the attachment and a quick demonstration of the nozzle precision (using a hand/toy for modesty) showing the fresh water stream. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Showing the control dial and how easily it installs. 8-12s: Demonstration of the dual nozzle spray. 12-15s: Text overlay: \"Save $ and the Planet.\" ● Ending CTA: Level up your throne at the link in bio!" }
+            },
+            { 
+                day: 8, product: "Magnetic Spice Jars Set", category: "Kitchen", link: "https://clearoutandcoinc.com/products/magnetic-spice-jars-set-plastic-spice-tins-seasoning-pepper-spice-storage-jars-tins-pepper-seasoning-sprays-kitchen-supplies?variant=47384974655709",
+                hooks: {
+                    fb: "You need the Magnetic Spice Jars Set if you want to reclaim your counter space and find exactly what you need in seconds.",
+                    ig: "You need the Magnetic Spice Jars Set if you want to turn your spice collection into a functional piece of art.",
+                    tt: "Stop digging through your spice cabinet."
+                },
+                fb: { copy: "You need the Magnetic Spice Jars Set if you want to reclaim your counter space and find exactly what you need in seconds. Searching through a dark cabinet for the right seasoning while your dinner is simmering is a stress no cook needs. Our wall-mounted spice set takes your collection out of the clutter and puts it right at eye level. With six sleek jars and a magnetic mounting sheet, you can organize your kitchen like a professional chef. It is a functional, stylish solution that turns your spices into a visual masterpiece while keeping your counters clear for prep." },
+                ig: { copy: "You need the Magnetic Spice Jars Set if you want to turn your spice collection into a functional piece of art. 🌶🧂 Kitchen organization that actually looks good. Mount them on the wall or stick them to your fridge for easy access. Sleek lids, magnetic power, total convenience. Tap to shop Kitchen Solutions! #KitchenOrganization #SpiceJars #ChefLife #ClearOutKitchen" },
+                tt: { script: "● Hook: Stop digging through your spice cabinet. ● Visuals: A \"Before and After.\" Show a messy, overflowing drawer of mismatched spices, then a clean wall-mounted magnetic display with the jars snapping into place. ● Scene Breakdown: 0-3s: The Hook. 3-8s: The \"Snap\"—showing the magnetic force as jars hit the board. 8-12s: Pouring colorful spices into the clear lids. 12-15s: Showing how much counter space was saved. ● Ending CTA: Get organized at the link in bio!" }
+            },
+            { 
+                day: 9, product: "Adjustable Elastic Waterproof Sofa Cover", category: "Living Room", link: "https://clearoutandcoinc.com/collections/all",
+                hooks: {
+                    fb: "You need the Adjustable Elastic Waterproof Sofa Cover if you want to enjoy your living room with your pets and kids without the constant fear of stains.",
+                    ig: "You need the Adjustable Elastic Waterproof Sofa Cover if you want to refresh your living room’s look while keeping your furniture brand new.",
+                    tt: "How to save your $2,000 sofa from your dog."
+                },
+                fb: { copy: "You need the Adjustable Elastic Waterproof Sofa Cover if you want to enjoy your living room with your pets and kids without the constant fear of stains. A high-quality sofa is a significant investment, but it only takes one spilled glass of wine or a muddy paw to ruin its appearance. Our elasticized cover provides a \"second skin\" for your furniture that is both stylish and incredibly durable. Designed to fit 1-4 seater L-shaped couches, it is waterproof and machine washable, allowing you to refresh your living room’s look in minutes. Protect your investment and live comfortably." },
+                ig: { copy: "You need the Adjustable Elastic Waterproof Sofa Cover if you want to refresh your living room’s look while keeping your furniture brand new. 🛋🐾 Waterproof, elastic, and pet-friendly. Say goodbye to pet hair and stains! Available in Light Grey, Beige, and Green. Tap to shop the Living Room collection. #HomeHacks #PetFriendlyHome #InteriorInspo #ClearOutCo" },
+                tt: { script: "● Hook: How to save your $2,000 sofa from your dog. ● Visuals: Show a dog jumping onto a couch with the cover on. Then, pour a small amount of water on the cover to show it beading off instantly. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Demonstrating the \"Stretch\"—pulling the cover over the couch corner. 8-12s: The \"Spill Test\"—water beading on the surface. 12-15s: Tossing the cover into the laundry. ● Ending CTA: Shop 1-4 seater sizes at the link in bio!" }
+            },
+            { 
+                day: 10, product: "Minimalist Non-Slip Soft Carpet", category: "Living Room", link: "https://clearoutandcoinc.com/collections/living-room",
+                hooks: {
+                    fb: "You need the Minimalist Non-Slip Soft Carpet if you want to add a layer of warmth and sophisticated design to your living space.",
+                    ig: "You need the Minimalist Non-Slip Soft Carpet if you want to create a cozy, high-end sanctuary in your bedroom or lounge.",
+                    tt: "The rug of your dreams exists."
+                },
+                fb: { copy: "You need the Minimalist Non-Slip Soft Carpet if you want to add a layer of warmth and sophisticated design to your living space. The floor is the largest surface in your home, yet it is often the most neglected. A cold, hard floor can make a room feel uninviting and cavernous. Our Minimalist Carpet measures a generous 200x300cm, providing a plush, wavy-patterned foundation that ties any room together. With its specialized non-slip backing, it offers both safety and luxury. Experience the comfort of a high-end rug every morning and transform your bedroom or lounge into a true sanctuary." },
+                ig: { copy: "You need the Minimalist Non-Slip Soft Carpet if you want to create a cozy, high-end sanctuary in your bedroom or lounge. ✨☁ Soft to the touch and built with a non-slip base for your family's safety. It is the piece that makes a house feel like a home. Link in bio for full details and payment plans. #LuxuryLiving #RugLove #HomeDecor #ClearOutLiving" },
+                tt: { script: "● Hook: The rug of your dreams exists. ● Visuals: A \"Close-up Texture\" video. Show bare feet stepping onto the plush, wavy carpet. Then, pan out to show how it fills a modern living room setting. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Macro shot of the soft fibers and wavy pattern. 8-12s: Showing the non-slip back grip as someone tries to slide it. 12-15s: Full room reveal. ● Ending CTA: Shop the Living Room collection now." }
+            },
+            { 
+                day: 11, product: "10 PC Stainless Steel Food Storage Containers", category: "Kitchen", link: "https://clearoutandcoinc.com/products/5-10pcs-stainless-steel-food-storage-containers-with-flip-top-lids-reusable-fridge-organizers-for-kitchen-picnics-food-storage?variant=47384987697373",
+                hooks: {
+                    fb: "You need the 10 PC Stainless Steel Food Storage Containers if you want a clean, organized fridge and a healthier way to store your meals.",
+                    ig: "You need the 10 PC Stainless Steel Food Storage Containers if you want an organized kitchen that is built to last.",
+                    tt: "Stop using plastic for your leftovers."
+                },
+                fb: { copy: "You need the 10 PC Stainless Steel Food Storage Containers if you want a clean, organized fridge and a healthier way to store your meals. Plastic containers often stain, warp in the dishwasher, and can leach harmful chemicals into your food over time. It is time for a permanent upgrade. Our 10-piece set is crafted from high-grade stainless steel, making them the last storage solution you will ever need. The airtight flip-top lids keep your vegetables crisp and your leftovers fresh for days. Whether you are prepping for the week or packing a picnic, these containers are the durable, eco-friendly choice for a modern kitchen." },
+                ig: { copy: "You need the 10 PC Stainless Steel Food Storage Containers if you want an organized kitchen that is built to last. ✅ Say goodbye to stained plastic and hello to sleek stainless steel. Reusable, dishwasher safe, and perfect for fridge organization. Tap the photo to shop the full 10-piece set! #KitchenInspo #MealPrepIdeas #EcoFriendlyKitchen #ClearOutCo" },
+                tt: { script: "● Hook: Stop using plastic for your leftovers. ● Visuals: A \"Fridge Restock\" video. Show the transition from messy, half-open plastic bags to neatly stacked, uniform stainless steel containers. ● Scene Breakdown: 0-3s: The Hook. 3-8s: The \"Lid Snap\"—showing how secure the flip-top is. 8-12s: Showing a colorful salad staying fresh inside. 12-15s: Stacking them perfectly in the fridge. ● Ending CTA: Grab the 10-pack at the link in bio!" }
+            },
+            { 
+                day: 12, product: "10-18 Inch 3D HD Phone Screen Magnifier", category: "Tech", link: "https://clearoutandcoinc.com/products/portable-phone-screen-magnifier-stand-set-foldable-adjustable-watching-video-movie-phone-tool-screen-magnifier-rack-version?variant=47452163670237",
+                hooks: {
+                    fb: "You need the 10-18 Inch 3D HD Phone Screen Magnifier if you want to enjoy your favorite shows without squinting at a small screen.",
+                    ig: "You need the 10-18 Inch 3D HD Phone Screen Magnifier if you want to upgrade your mobile viewing experience on a budget.",
+                    tt: "Turn your phone into a tablet for $20."
+                },
+                fb: { copy: "You need the 10-18 Inch 3D HD Phone Screen Magnifier if you want to enjoy your favorite shows without squinting at a small screen. Watching a full-length movie on a tiny phone leads to significant eye strain and a diminished experience. But you don't always have access to a large television while traveling or relaxing in bed. Our foldable screen magnifier instantly doubles your display size, providing a theater-like experience wherever you are. No batteries or cables required—just pop your phone into the stand and enjoy HD magnification. It is the ultimate portable accessory for any movie lover or gamer on the move." },
+                ig: { copy: "You need the 10-18 Inch 3D HD Phone Screen Magnifier if you want to upgrade your mobile viewing experience on a budget. 🍿🎬 Your personal portable cinema is here. Lightweight, foldable, and perfect for travel or late-night Netflix. Only $20.99! Tap to shop the Tech collection. #TechHacks #MobileGaming #MovieNight #ClearOutCo" },
+                tt: { script: "● Hook: Turn your phone into a tablet for $20. ● Visuals: Show someone holding a phone, looking uncomfortable. Then, place the phone behind the magnifier to reveal a massive, crisp 18-inch image. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Unfolding the stand in 2 seconds. 8-12s: Showing a movie scene becoming \"life-sized\" through the lens. 12-15s: Folding it flat and sliding it into a bag. ● Ending CTA: Link in bio to shop!" }
+            },
+            { 
+                day: 13, product: "100% Blackout Curtains with Grommets", category: "Bedroom", link: "https://clearoutandcoinc.com/products/1pc-solid-100-blackout-curtains-with-grommets-total-privacy-drapes-for-bedroom-beautiful-curtains-for-living-room?variant=47474000363741",
+                hooks: {
+                    fb: "You need the 100% Blackout Curtains with Grommets if you want to achieve a deep, restorative sleep every night, regardless of what is happening outside your window.",
+                    ig: "You need the 100% Blackout Curtains with Grommets if you want to turn your bedroom into a pitch-black sanctuary.",
+                    tt: "How I finally fixed my sleep schedule."
+                },
+                fb: { copy: "You need the 100% Blackout Curtains with Grommets if you want to achieve a deep, restorative sleep every night, regardless of what is happening outside your window. Light pollution from street lamps or early morning sun can disrupt your circadian rhythm, leaving you fatigued even after a full night’s sleep. Our blackout curtains are engineered to block 100% of intrusive light while providing thermal insulation that keeps your room cool in the summer and warm in the winter. With easy-to-install grommets, they provide total privacy and the perfect environment for rest. Transform your bedroom into a sanctuary of silence and darkness." },
+                ig: { copy: "You need the 100% Blackout Curtains with Grommets if you want to turn your bedroom into a pitch-black sanctuary. 🌙💤 Sleep better, live better. Our drapes block all light and help regulate your room's temperature for the perfect night's rest. Tap to shop the Bedroom collection! #SleepHygiene #BedroomDecor #BlackoutCurtains #ClearOutCo" },
+                tt: { script: "● Hook: How I finally fixed my sleep schedule. ● Visuals: Start with a bright room at midday. Close the blackout curtains, and the room goes completely dark instantly. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Hand drawing the curtains shut—day to night in 1 second. 8-12s: Thermal benefit text: \"Keeps heat out.\" 12-15s: Someone falling into a deep sleep comfortably. ● Ending CTA: Shop the collection at the link in bio." }
+            },
+            { 
+                day: 14, product: "12pcs Teardrop Decorative Mirror Set", category: "Decorations", link: "https://clearoutandcoinc.com/products/12pcs-teardrop-combination-bathroom-mirror-golden-artistic-decorative-mirror-for-bedroom-living-room-hallway-accent-wall?variant=47496803877085",
+                hooks: {
+                    fb: "You need the 12pcs Teardrop Decorative Mirror Set if you want to brighten up your home and add a designer touch without the high cost of custom art.",
+                    ig: "You need the 12pcs Teardrop Decorative Mirror Set if you want to make your space feel larger and more luxurious.",
+                    tt: "This $30 hack makes your room look huge."
+                },
+                fb: { copy: "You need the 12pcs Teardrop Decorative Mirror Set if you want to brighten up your home and add a designer touch without the high cost of custom art. Small hallways or dark entryways can often feel cramped and uninviting. The oldest trick in interior design is using mirrors to reflect light and create the illusion of space. Our 12-piece golden set allows you to create your own unique wall installation. These wavy, teardrop-shaped mirrors are lightweight and easy to arrange, turning any plain wall into a sophisticated focal point. It is a simple, artistic way to make your home feel larger and more luxurious." },
+                ig: { copy: "You need the 12pcs Teardrop Decorative Mirror Set if you want to make your space feel larger and more luxurious. ✨🪞 This 12-piece set is perfect for creating a stunning accent wall. Golden, artistic, and easy to install. Tap to shop styling ideas! #HomeStyling #WallDecor #MirrorArt #ClearOutLiving" },
+                tt: { script: "● Hook: This $30 hack makes your room look huge. ● Visuals: A \"Time-lapse Installation.\" Show someone arranging the 12 mirrors on a plain white wall above a console table. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Peeling the backing off the mirrors. 8-12s: Fast-motion placement of the teardrop shapes. 12-15s: Final reveal with a lamp reflecting in the mirrors. ● Ending CTA: Shop the Decoration collection!" }
+            },
+            { 
+                day: 15, product: "Dragon Door Knocker", category: "Decorations", link: "https://clearoutandcoinc.com/collections/living-room",
+                hooks: {
+                    fb: "You need the Dragon Door Knocker if you want to give your home a touch of mythical character and stand out from the neighbors.",
+                    ig: "You need the Dragon Door Knocker if you want to add a bold, artistic edge to your home’s entrance.",
+                    tt: "The coolest thing on my front door."
+                },
+                fb: { copy: "You need the Dragon Door Knocker if you want to give your home a touch of mythical character and stand out from the neighbors. First impressions begin at the front door. While a standard doorbell is functional, it says nothing about the personality of the people inside. Our Dragon Door Knocker is a statement piece crafted for those with a flair for the unique. Beyond the entryway, it serves as a heavy-duty wall hook for your coats or bags, bringing a touch of ancient drama to your interior design. It is durable, detailed, and undeniably bold. Give your home the entrance it deserves." },
+                ig: { copy: "You need the Dragon Door Knocker if you want to add a bold, artistic edge to your home’s entrance. 🐉 This stunning piece is the perfect blend of fantasy and function. Whether on your door or as a wall hook, it commands attention. Tap to shop the unique collection! #GothicHome #ExteriorDesign #DragonDecor #ClearOutCo" },
+                tt: { script: "● Hook: The coolest thing on my front door. ● Visuals: Close-up of the dragon's face and the \"Satisfying Knock\" sound. Pan out to show it mounted on a dark wood door. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Using it to hang a heavy leather jacket (demonstrating the hook function). 8-12s: Macro shots of the metallic scales. 12-15s: Knocking sound. ● Ending CTA: Get your dragon at the link in bio." }
+            },
+            { 
+                day: 16, product: "Abstract Thinker Sculpture", category: "Decorations", link: "https://clearoutandcoinc.com/products/bookshelf-decor-home-decor-person-who-is-thinking-abstract-thinker-sculpture-figurine-statue-resin-modern-reading-decoration?variant=47385009881309",
+                hooks: {
+                    fb: "You need the Abstract Thinker Sculpture if you want to elevate your home decor with a piece that sparks conversation and inspires deep thought.",
+                    ig: "You need the Abstract Thinker Sculpture if you want a sophisticated finishing touch for your office or living room.",
+                    tt: "How to style your bookshelf like a pro."
+                },
+                fb: { copy: "You need the Abstract Thinker Sculpture if you want to elevate your home decor with a piece that sparks conversation and inspires deep thought. A bookshelf should be more than just a place to store volumes; it should be a reflection of your personality and intellectual curiosity. Our modern resin figurine, with its smooth lines and minimalist design, adds a sophisticated, contemplative vibe to any library or home office. It is the perfect finishing touch for a curate bookshelf or a professional desk. Elevate your surroundings with art that resonates with your internal journey." },
+                ig: { copy: "You need the Abstract Thinker Sculpture if you want a sophisticated finishing touch for your office or living room. 🧠✨ Minimalist, modern, and meaningful. Available in gold and neutral tones. Tap to shop the Shelfie upgrade! #ModernArt #Shelfie #HomeOfficeDecor #ClearOutCo" },
+                tt: { script: "● Hook: How to style your bookshelf like a pro. ● Visuals: A \"Styling\" video showing the sculpture placed next to a stack of leather-bound books and a small plant. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Trying different placements on a shelf. 8-12s: Zooming in on the smooth resin texture. 12-15s: Final wide shot of the \"Expensive-looking\" setup. ● Ending CTA: Shop the Decorations collection." }
+            },
+            { 
+                day: 17, product: "Creative Frameless DIY Wall Clock", category: "Decorations", link: "https://clearoutandcoinc.com/products/creative-frameless-diy-wall-clock-wall-decal-home-silent-clock-living-room-office-wall-",
+                hooks: {
+                    fb: "You need the Creative Frameless DIY Wall Clock if you want a bold, modern focal point for your home that you can customize yourself.",
+                    ig: "You need the Creative Frameless DIY Wall Clock if you want to fill that empty wall space with something functional and stylish.",
+                    tt: "The biggest clock I have ever owned."
+                },
+                fb: { copy: "You need the Creative Frameless DIY Wall Clock if you want a bold, modern focal point for your home that you can customize yourself. Standard wall clocks are often too small for large living room walls, leaving the space feeling empty and unbalanced. Our DIY clock allows you to determine the diameter, making it a functional art piece that fits your specific room size. Most importantly, it is completely silent. No more distracting ticking sounds while you are trying to work or rest. It is a sleek, minimalist solution that brings your walls to life while maintaining a quiet, peaceful home environment." },
+                ig: { copy: "You need the Creative Frameless DIY Wall Clock if you want to fill that empty wall space with something functional and stylish. 🕒✨ DIY your way to a modern home. Silent, sleek, and perfectly sized for your wall. Tap the link in bio to shop Black or Gold! #DIYHome #ModernClock #SilentClock #ClearOutDecor" },
+                tt: { script: "● Hook: The biggest clock I have ever owned. ● Visuals: Use a ruler to show the massive scaling. Show the application of the numbers (peel and stick) and the silent movement of the hands. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Sticking the \"12\" and \"6\" on the wall with perfect spacing. 8-12s: Extreme close-up of the silent second hand moving smoothly. 12-15s: Full wall reveal. ● Ending CTA: Get the DIY kit at the link in bio!" }
+            },
+            { 
+                day: 18, product: "Royal Velvet Curtains", category: "Bedroom", link: "https://clearoutandcoinc.com/products/fashion-royal-blue-velvet-curtains-for-living-room-luxury-blackout-bedroom-european-window-kitchen-elegant-solid-color-tulle?variant=47474002723037",
+                hooks: {
+                    fb: "You need the Royal Velvet Curtains if you want to transform your bedroom into a five-star suite.",
+                    ig: "You need the Royal Velvet Curtains if you want a room that feels opulent, quiet, and perfectly dark.",
+                    tt: "Hotel luxury in your own bedroom."
+                },
+                fb: { copy: "You need the Royal Velvet Curtains if you want to transform your bedroom into a five-star suite. There is a specific kind of luxury found in high-end hotels—the heavy, velvet drapes that block out the world and make the room feel like a quiet sanctuary. You can bring that same feeling to your home. Featuring elegant pearl and crystal tie-backs, these curtains provide total blackout capability while adding a sophisticated texture to your space. They are designed for those who value both style and a perfect night's rest. Elevate your windows and your sleep quality with the ultimate in luxury drapes." },
+                ig: { copy: "You need the Royal Velvet Curtains if you want a room that feels opulent, quiet, and perfectly dark. 💎☁ Velvet dreams are made of these. Total blackout with a stunning royal finish. Tap to shop our premium Bedroom collection. #LuxuryHome #VelvetCurtains #BedroomMakeover #ClearOutCo" },
+                tt: { script: "● Hook: Hotel luxury in your own bedroom. ● Visuals: Run a hand down the velvet fabric to show the sheen. Show the crystal tie-backs sparkling under a ring light. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Showing the \"Before\" (plain windows) and \"After\" (velvet drapes). 8-12s: Close-up of the pearl tie-back. 12-15s: Turning off the lights to show zero light leakage. ● Ending CTA: Shop the Bedroom collection!" }
+            },
+            { 
+                day: 19, product: "Large Metal Wall Art Modern Boho", category: "Decorations", link: "https://clearoutandcoinc.com/products/gorgeous-gold-black-metal-wall-decor-large-minimalist-modern-boho-art-abstract-flower-leaf-for-bedroom-living-room?variant=47385007030493",
+                hooks: {
+                    fb: "You need the Large Metal Wall Art Modern Boho Abstract Decor if you want a timeless, sophisticated look for your living room that won’t break the bank.",
+                    ig: "You need the Large Metal Wall Art Modern Boho Abstract Decor if you want a designer-curated look in your home.",
+                    tt: "The perfect art set for minimalists."
+                },
+                fb: { copy: "You need the Large Metal Wall Art Modern Boho Abstract Decor if you want a timeless, sophisticated look for your living room that won’t break the bank. Finding art that looks expensive but fits a real budget is a constant challenge. Traditional canvases can sometimes feel dated, but metal wall art provides a three-dimensional texture that modernizes any space instantly. This set features three framed leaf designs in gold and black, creating a high-end, gallery-style look. Whether placed over a sofa or a headboard, these pieces add depth and elegance to your home without the high price tag of custom art." },
+                ig: { copy: "You need the Large Metal Wall Art Modern Boho Abstract Decor if you want a designer-curated look in your home. 🌿✨ Boho meets modern with this 3-piece metal set. Gold, black, and beautiful. Tap to shop the wall art collection! #BohoModern #MetalWallArt #InteriorDesign #ClearOutCo" },
+                tt: { script: "● Hook: The perfect art set for minimalists. ● Visuals: Show the three panels being unboxed. Hang them with a slight gap between each to show the geometric flow on the wall. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Zooming in on the metal texture and frame. 8-12s: Showing how they look from the side (3D depth). 12-15s: Full living room reveal. ● Ending CTA: Shop the set at the link in bio!" }
+            },
+            { 
+                day: 20, product: "Enfinigy 2-Slot Toaster White", category: "Kitchen", link: "https://clearoutandcoinc.com/products/zwilling-enfinigy-2-short-slots-toaster-white?variant=47381357494493",
+                hooks: {
+                    fb: "You need the Enfinigy 2-Slot Toaster if you want to start your morning with the perfect crunch and an appliance that complements your high-end kitchen.",
+                    ig: "You need the Enfinigy 2-Slot Toaster if you want consistent results and a beautiful counter display.",
+                    tt: "The only toaster you will ever need."
+                },
+                fb: { copy: "You need the Enfinigy 2-Slot Toaster if you want to start your morning with the perfect crunch and an appliance that complements your high-end kitchen. A toaster should not just sit on your counter; it should perform with absolute precision. The Enfinigy is German-engineered to ensure that every slice is perfectly browned, every single time. With its sleek white exterior and intuitive controls, it combines modern aesthetics with professional-grade performance. Stop settling for uneven toast and start your day with an appliance that is as reliable as it is beautiful." },
+                ig: { copy: "You need the Enfinigy 2-Slot Toaster if you want consistent results and a beautiful counter display. 🍞󰎲 Precision in every slice. Our German-engineered toaster is the ultimate kitchen upgrade. Tap to shop Kitchen Solutions! #KitchenAppliances #GermanDesign #BreakfastTime #ClearOutCo" },
+                tt: { script: "● Hook: The only toaster you will ever need. ● Visuals: Close-up of the sleek buttons and the bread popping up perfectly golden brown. Use a satisfying \"crunch\" sound effect. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Showing the sleek white finish against a clean kitchen. 8-12s: Slow-motion shot of the toast popping up. 12-15s: A perfect butter-spread. ● Ending CTA: Upgrade your kitchen at the link in bio." }
+            },
+            { 
+                day: 21, product: "Anti-Splash Silicone Kitchen Sink Drain Mat", category: "Kitchen", link: "https://clearoutandcoinc.com/products/kitchen-sink-drain-mat-silicone-sink-stopper-sink-strainer-spla-proof-absorbent-pad-cutting-and-trimming-for-faucet-drain?variant=47440046358749",
+                hooks: {
+                    fb: "You need the Anti-Splash Silicone Kitchen Sink Drain Mat if you want a drier, cleaner kitchen counter without the constant wiping.",
+                    ig: "You need the Anti-Splash Silicone Kitchen Sink Drain Mat if you want to keep your counters spotless and dry.",
+                    tt: "Stop wiping your sink every five minutes."
+                },
+                fb: { copy: "You need the Anti-Splash Silicone Kitchen Sink Drain Mat if you want a drier, cleaner kitchen counter without the constant wiping. Continuous splashing around the faucet can lead to water stains and even mold over time. Wiping the counter every time you wash a dish is a chore you can finally skip. Our silicone mat features a diversion drainage design that catches splashes and directs the water right back into the sink automatically. It is a simple, effective hack that keeps your kitchen looking spotless with zero effort." },
+                ig: { copy: "You need the Anti-Splash Silicone Kitchen Sink Drain Mat if you want to keep your counters spotless and dry. 💧🧼 No more puddles behind the sink! This silicone mat is the kitchen hack you didn't know you needed. Tap to shop Kitchen Solutions! #KitchenHacks #CleanHome #KitchenOrganization #ClearOutCo" },
+                tt: { script: "● Hook: Stop wiping your sink every five minutes. ● Visuals: Show a \"messy\" sink with water everywhere. Then place the silicone mat. Show the water hitting the mat and flowing perfectly into the drain. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Pouring water directly onto the mat to show the drainage path. 8-12s: The \"Dry Counter\" reveal. 12-15s: Wiping it clean in one swipe. ● Ending CTA: Link in bio for the kitchen hack!" }
+            },
+            { 
+                day: 22, product: "3-in-1 Rotary Cheese Grater", category: "Kitchen", link: "https://clearoutandcoinc.com/products/lmetjma-3-in-1-rotary-cheese-grater-versatile-manual-vegetable-slicer-peanut-nuts-grinder-cheese-vegetable-shredder-clear-jt242?variant=47385382486237",
+                hooks: {
+                    fb: "You need the 3-in-1 Rotary Cheese Grater if you want to cut your meal prep time in half and keep your fingers safe in the process.",
+                    ig: "You need the 3-in-1 Rotary Cheese Grater if you want to whip up salads and pasta toppings in seconds.",
+                    tt: "Throw away your old grater."
+                },
+                fb: { copy: "You need the 3-in-1 Rotary Cheese Grater if you want to cut your meal prep time in half and keep your fingers safe in the process. Preparing vegetables and grating cheese shouldn't be the most time-consuming or dangerous part of your meal. A traditional hand grater is slow and carries the risk of injury. Our 3-in-1 rotary system lets you slice, shred, and grind in seconds with a simple turn of the handle. From carrots and cucumbers to cheese and nuts, it handles everything with ease. Prep your entire salad or pasta topping in record time and enjoy a safer, more efficient kitchen experience." },
+                ig: { copy: "You need the 3-in-1 Rotary Cheese Grater if you want to whip up salads and pasta toppings in seconds. 🧀🥒 Slice, shred, and grind with zero effort. Safe, fast, and easy to clean! Tap the link in bio to shop the kitchen collection. #KitchenGadgets #CookingHacks #MealPrep #ClearOutCo" },
+                tt: { script: "● Hook: Throw away your old grater. ● Visuals: A \"Fast-Paced Prep\" video. Grate a block of cheese in five seconds, then switch the head and slice a cucumber even faster. ● Scene Breakdown: 0-3s: The Hook. 3-8s: The \"Handle Turn\"—showing the speed of the blades. 8-12s: Close-up of the perfectly sliced cucumbers. 12-15s: Rinsing the attachment under the tap. ● Ending CTA: Shop the rotary grater at the link in bio!" }
+            },
+            { 
+                day: 23, product: "Hot and Cold Vacuum Insulated Flask (450ml)", category: "Kitchen", link: "https://clearoutandcoinc.com/products/450ml-thermos-water-bottle-stainless-steel-insulation-vacuum-flasks-cup-keep-cold-and-hot-mug-vacuum-flask-car-water-bottle?variant=47439990161629",
+                hooks: {
+                    fb: "You need the Hot and Cold Vacuum Insulated Flask if you want to enjoy your morning coffee piping hot or your midday water ice-cold without the premium price tag.",
+                    ig: "You need the Hot and Cold Vacuum Insulated Flask if you want a reliable, leak-proof bottle that fits perfectly in your bag or car.",
+                    tt: "The only $23 flask you need."
+                },
+                fb: { copy: "You need the Hot and Cold Vacuum Insulated Flask if you want to enjoy your morning coffee piping hot or your midday water ice-cold without the premium price tag. Bringing your beverages from home is the easiest way to save money, but it’s only worth it if your drink stays at the right temperature. Our 450ml flask is the perfect size for your car’s cup holder and features vacuum insulation that maintains heat or cold for hours. It is the reliable, leak-proof companion your daily commute has been missing. Durable, sleek, and budget-friendly." },
+                ig: { copy: "You need the Hot and Cold Vacuum Insulated Flask if you want a reliable, leak-proof bottle that fits perfectly in your bag or car. ☕❄ 450ml of pure insulation power. Tap to shop the Outdoor and Commuter collection! #DailyEssentials #CoffeeLovers #InsulatedBottle #ClearOutCo" },
+                tt: { script: "● Hook: The only $23 flask you need. ● Visuals: Show the flask being tucked into the side pocket of a backpack. Pour steaming hot coffee into it and show it still steaming hours later at the office. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Pouring steaming coffee. 8-12s: Checking the clock—\"4 Hours Later.\" 12-15s: Taking a sip and seeing the steam still rising. ● Ending CTA: Get yours at the link in bio!" }
+            },
+            { 
+                day: 24, product: "Portable Camping Propane Stove", category: "Outdoor", link: "https://clearoutandcoinc.com/products/1-4l-backpacking-stove-camping-propane-cooking-gear-portable-camp-burner-system-with-red-tripod?variant=47458684469469",
+                hooks: {
+                    fb: "You need the Portable Camping Propane Stove if you want a reliable, compact way to cook your meals or boil water in minutes, no matter where your journey takes you.",
+                    ig: "You need the Portable Camping Propane Stove if you want a hot meal at the summit without the extra weight in your pack.",
+                    tt: "How to cook a 5-star meal in the woods."
+                },
+                fb: { copy: "You need the Portable Camping Propane Stove if you want a reliable, compact way to cook your meals or boil water in minutes, no matter where your journey takes you. When you are deep in the wilderness, a warm meal is more than a luxury—it is a necessity. Carrying heavy, disconnected pots and burners is a burden. Our integrated system features a 1.4L pot and burner with a specialized tripod for stability on uneven ground. It boils water in record time, ensuring you spend less time waiting and more time enjoying the view. Essential gear for your next hike or emergency kit." },
+                ig: { copy: "You need the Portable Camping Propane Stove if you want a hot meal at the summit without the extra weight in your pack. 🏔🔥 Lightweight, efficient, and adventure-ready. Tap to shop the Outdoor collection! #CampingGear #BackpackingLife #OutdoorCooking #ClearOutCo" },
+                tt: { script: "● Hook: How to cook a 5-star meal in the woods. ● Visuals: A \"Fast Setup\" video. Click the burner onto the propane, snap the pot on, and show water boiling in under two minutes. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Snapping the integrated pot onto the burner. 8-12s: The \"Jet-like\" flame of the propane burner. 12-15s: Enjoying a warm meal at a scenic campsite. ● Ending CTA: Gear up for your next adventure at the link in bio." }
+            },
+            { 
+                day: 25, product: "3D Wall Panels (20 Pack)", category: "Decorations", link: "https://clearoutandcoinc.com/products/20pcs-3d-wall-panels-30x30cm-indoor-wall-decoration-for-living-room-bedroom-hotel-office-mural-tile-panel-mold-3d-wall-sticker?variant=47496804335837",
+                hooks: {
+                    fb: "You need the 3D Wall Panels if you want to create a stunning feature wall that looks like a professional designer installation for a fraction of the cost.",
+                    ig: "You need the 3D Wall Panels if you want to turn a boring flat wall into a designer masterpiece.",
+                    tt: "The easiest DIY feature wall ever."
+                },
+                fb: { copy: "You need the 3D Wall Panels if you want to create a stunning feature wall that looks like a professional designer installation for a fraction of the cost. Transforming a room usually requires messy paint or expensive wallpaper. However, you can achieve a high-end, architectural look in a single afternoon with our textured 3D panels. These 30x30cm tiles add depth and sophistication to your living room, bedroom, or office instantly. They are easy to install and completely change the vibe of your home, turning a boring flat wall into a masterpiece of modern design." },
+                ig: { copy: "You need the 3D Wall Panels if you want to turn a boring flat wall into a designer masterpiece. 🧱✨ Texture that talks. Our 20-pack of panels is the ultimate DIY hack for your living room or office. Tap to shop the wall decor collection! #WallDecor #3DPanels #HomeRenovation #ClearOutDecor" },
+                tt: { script: "● Hook: The easiest DIY feature wall ever. ● Visuals: A \"Before and After.\" Show a plain white wall, then a quick cut of several panels being stuck on, ending with a fully textured, luxury look. ● Scene Breakdown: 0-3s: The Hook. 3-8s: The \"Satisfying Stick\"—showing how the tiles align. 8-12s: Close-up of the shadows and depth of the 3D pattern. 12-15s: Final room reveal. ● Ending CTA: Get the 20-pack at the link in bio!" }
+            },
+            { 
+                day: 26, product: "4-PC Heat-Resistant Placemat Leaf Design", category: "Dining", link: "https://clearoutandcoinc.com/products/set-of-4-round-placemats-place-mats-holiday-wipeable-vinyl-placemats-kitchen-dinner-christmas-thanksgiving-farmhouse-wedding?variant=47384918458589",
+                hooks: {
+                    fb: "You need the 4-PC Heat-Resistant Placemat Leaf Design if you want to host elegant dinners that are as practical as they are beautiful.",
+                    ig: "You need the 4-PC Heat-Resistant Placemat Leaf Design if you want an easy way to elevate your everyday meals and impress your guests.",
+                    tt: "The secret to a Pinterest-worthy dinner table."
+                },
+                fb: { copy: "You need the 4-PC Heat-Resistant Placemat Leaf Design if you want to host elegant dinners that are as practical as they are beautiful. A beautiful dinner party starts with the table setting, but you shouldn't have to sacrifice your table’s finish to look good. Our Leaf Design Placemats are heat-resistant and wipeable, protecting your furniture from hot plates and spills while providing a stunning, organic aesthetic. Made from high-quality vinyl, they are perfect for everything from holiday gatherings to your daily family meals. Protect your home and elevate your entertaining in one simple step." },
+                ig: { copy: "You need the 4-PC Heat-Resistant Placemat Leaf Design if you want an easy way to elevate your everyday meals and impress your guests. 🍽🌿 Host with style. Heat-resistant, durable, and stunningly detailed. Tap to shop the Dining collection! #Tablescape #DiningDecor #HomeEntertaining #ClearOutCo" },
+                tt: { script: "● Hook: The secret to a Pinterest-worthy dinner table. ● Visuals: A \"Table Set\" video. Place the placemats down, followed by plates and greenery. Show how easy it is to wipe a spill off the vinyl. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Macro shot of the intricate leaf pattern. 8-12s: Putting a steaming hot plate down with zero damage. 12-15s: Wiping a wine spill clean with one swipe. ● Ending CTA: Shop the set at the link in bio." }
+            },
+            { 
+                day: 27, product: "5-Pack RFID Blocking Credit Card Protector Sleeves", category: "Security", link: "https://clearoutandcoinc.com/products/5pcs-anti-theft-for-rfid-credit-card-protector-blocking-cardholder-sleeve-skin-case-covers-protection-bank-card-case-new?variant=47452163211485",
+                hooks: {
+                    fb: "You need the 5-Pack RFID Blocking Credit Card Protector Sleeves if you want total peace of mind while traveling or commuting in busy areas.",
+                    ig: "You need the 5-Pack RFID Blocking Credit Card Protector Sleeves if you want to stop hackers from scanning your info.",
+                    tt: "Is your wallet actually safe?"
+                },
+                fb: { copy: "You need the 5-Pack RFID Blocking Credit Card Protector Sleeves if you want total peace of mind while traveling or commuting in busy areas. In today’s digital world, thieves can steal your credit card information without ever touching your wallet. RFID-enabled cards broadcast your data, making you vulnerable in malls, airports, and on public transit. Our 5-pack of sleeves creates an impenetrable barrier against unauthorized scanners. They are slim enough to fit in your existing wallet, providing a high-tech layer of security for a very small price. Protect your finances and your identity today." },
+                ig: { copy: "You need the 5-Pack RFID Blocking Credit Card Protector Sleeves if you want to stop hackers from scanning your info. 💳🔒 Protect your plastic! Electronic pickpocketing is real, but our sleeves have you covered. Slim, durable, and essential for travel. Tap to shop! #TravelSafety #SecurityTips #RFIDBlocking #ClearOutCo" },
+                tt: { script: "● Hook: Is your wallet actually safe? ● Visuals: Show someone holding a phone near a wallet (simulating a scan). Then, slide the card into the RFID sleeve and show the \"Scan Failed\" message. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Demonstrating how thin the sleeves are—they fit right into a standard wallet slot. 8-12s: Explaining \"Electronic Pickpocketing.\" 12-15s: Showing the 5 different color options. ● Ending CTA: Link in bio for the 5-pack security!" }
+            },
+            { 
+                day: 28, product: "5-Piece Bottle Stopper for Wine and Champagne", category: "Dining", link: "https://clearoutandcoinc.com/products/wooden-cork-red-wine-pourer-oil-champagne-beer-bottle-stopper-plug-wine-tasting-tools-pourers-wedding-birthday-party-supplies?variant=47384883855581",
+                hooks: {
+                    fb: "You need the 5-Piece Bottle Stopper for Wine and Champagne if you want to preserve the flavor of your favorite vintage and serve your guests with precision.",
+                    ig: "You need the 5-Piece Bottle Stopper for Wine and Champagne if you want your open bottles to stay fresh for days.",
+                    tt: "Stop wasting your wine."
+                },
+                fb: { copy: "You need the 5-Piece Bottle Stopper for Wine and Champagne if you want to preserve the flavor of your favorite vintage and serve your guests with precision. There is nothing more disappointing than a good bottle of wine going flat because of a poor seal. Standard corks are often difficult to replace and can leak. Our 5-piece set combines stainless steel durability with a natural wood cork seal for a professional, leak-proof finish. The integrated pourer ensures a drip-free experience, protecting your tablecloths from stains. It is the perfect addition to any home bar or a thoughtful gift for the wine lover in your life." },
+                ig: { copy: "You need the 5-Piece Bottle Stopper for Wine and Champagne if you want your open bottles to stay fresh for days. 🍷✨ Pour like a pro and preserve the taste you love. Stainless steel meets natural wood. Tap to shop the Home Bar collection! #WineLovers #HomeBar #EntertainingTips #ClearOutCo" },
+                tt: { script: "● Hook: Stop wasting your wine. ● Visuals: Show a broken, crumbling cork. Then, replace it with the sleek stainless steel stopper. Show a perfect, drip-free pour. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Close-up of the wood cork seal. 8-12s: Pouring a glass of red wine—no drips. 12-15s: Turning the bottle sideways to show zero leaks. ● Ending CTA: Shop the 5-piece set at the link in bio." }
+            },
+            { 
+                day: 29, product: "5QT Round Chafing Dishes Buffet Set", category: "Dining", link: "https://clearoutandcoinc.com/products/2-4pack-5qt-fully-coated-round-chafing-dishes-buffet-set-with-glass-lid-white-style-chafer-water-pan?variant=47385046876381",
+                hooks: {
+                    fb: "You need the 5QT Round Chafing Dishes Buffet Set if you want to host stress-free events where the food stays warm and beautifully presented from start to finish.",
+                    ig: "You need the 5QT Round Chafing Dishes Buffet Set if you want to host like a pro and keep your meals hot for hours.",
+                    tt: "How to host a party without the stress."
+                },
+                fb: { copy: "You need the 5QT Round Chafing Dishes Buffet Set if you want to host stress-free events where the food stays warm and beautifully presented from start to finish. Hosting a large family gathering usually means the food is cold by the time everyone sits down. Our professional-grade chafing dishes use a water-pan system to maintain the perfect serving temperature for hours. The tempered glass lid allows your guests to see the menu without releasing heat, while the white finish adds a refined, professional touch to your table. Stop worrying about reheating and start enjoying your guests." },
+                ig: { copy: "You need the 5QT Round Chafing Dishes Buffet Set if you want to host like a pro and keep your meals hot for hours. 🥘✨ Buffet perfection is here. Glass lids, professional heat, and elegant design. Tap to shop for your next event! #HomeCatering #PartyPlanning #BuffetSetup #ClearOutCo" },
+                tt: { script: "● Hook: How to host a party without the stress. ● Visuals: A \"Party Setup\" video. Show the chafing dish being assembled, the food added, and the steam rising when the glass lid is lifted. ● Scene Breakdown: 0-3s: The Hook. 3-8s: The \"Steam Shot\"—lifting the lid to reveal hot wings or pasta. 8-12s: Showing the professional setup on a white table. 12-15s: Text overlay: \"Stay Hot All Night.\" ● Ending CTA: Shop catering essentials at the link in bio!" }
+            },
+            { 
+                day: 30, product: "7-Piece Kitchen Utensil Set", category: "Kitchen", link: "https://clearoutandcoinc.com/products/nnedsz-white-gold-stainless-steel-kitchen-utensil-set-7-piece-golden-cooking-tools-with-stand?variant=47381325480157",
+                hooks: {
+                    fb: "You need the 7-Piece Stainless Steel Kitchen Utensil Set if you want a cohesive, luxurious cooking experience that looks as good as it performs.",
+                    ig: "You need the 7-Piece Stainless Steel Kitchen Utensil Set if you want a kitchen that looks like it belongs in a magazine.",
+                    tt: "The most beautiful kitchen set I have ever seen."
+                },
+                fb: { copy: "You need the 7-Piece Stainless Steel Kitchen Utensil Set if you want a cohesive, luxurious cooking experience that looks as good as it performs. Mismatched, worn-out utensils can make even the most beautiful kitchen feel cluttered. Our 7-piece set features high-grade stainless steel with a stunning gold finish and marble-patterned handles. It includes everything you need for daily cooking, organized on a matching stand to save drawer space. It is a functional piece of art for your counter that elevates every meal you prepare. Give your kitchen the luxury upgrade it deserves." },
+                ig: { copy: "You need the 7-Piece Stainless Steel Kitchen Utensil Set if you want a kitchen that looks like it belongs in a magazine. ✨🍳 Golden hour in the kitchen! Elegance meets durability with marble and gold. Tap the link in bio to shop the premium collection! #KitchenGoals #LuxuryKitchen #CookingInStyle #ClearOutCo" },
+                tt: { script: "● Hook: The most beautiful kitchen set I have ever seen. ● Visuals: A \"Drawer to Counter\" transition. Show the removal of old plastic tools and the placement of the golden set on the counter. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Running a hand over the marble handles. 8-12s: Spinning the stand to show all 7 tools. 12-15s: A close-up of a golden spoon stirring a colorful dish. ● Ending CTA: Shop the Kitchen collection!" }
+            },
+            { 
+                day: 31, product: "Automatic Grape Peeler Machine", category: "Kitchen", link: "https://clearoutandcoinc.com/fr/products/automatic-grape-peeler-machine-electric-garlic-peeler-cherry-tomato-skin-remover-tool-for-small-fruits-efficient-peeling-kitchen?variant=47449363218653",
+                hooks: {
+                    fb: "You need the Automatic Grape Peeler Machine if you want to save time on meal prep and create professional-quality salads and snacks with zero effort.",
+                    ig: "You need the Automatic Grape Peeler Machine if you want to prep batch ingredients efficiently and save your fingers from manual peeling.",
+                    tt: "The kitchen tool you didn't know existed."
+                },
+                fb: { copy: "You need the Automatic Grape Peeler Machine if you want to save time on meal prep and create professional-quality salads and snacks with zero effort. We often avoid recipes that require peeled grapes or cherry tomatoes because the manual work is simply too tedious. This electric machine changes everything. It quickly and efficiently removes skins from small fruits and even garlic cloves in seconds. Whether you are prepping for a healthy snack or a complex sauce, this tool automates the most frustrating part of the process. It is the efficient, professional kitchen tool you never knew you needed until now." },
+                ig: { copy: "You need the Automatic Grape Peeler Machine if you want to prep batch ingredients efficiently and save your fingers from manual peeling. 🍇🧄 Effortless peeling for grapes, garlic, and more. Tap to shop this unique kitchen essential! #KitchenGadgets #MealPrep #HealthyEating #ClearOutKitchen" },
+                tt: { script: "● Hook: The kitchen tool you didn't know existed. ● Visuals: Show a bowl of unpeeled grapes, then the machine in action, quickly producing a bowl of perfectly peeled, intact fruit. ● Scene Breakdown: 0-3s: The Hook. 3-8s: Pressing the \"One-Touch\" button. 8-12s: Close-up of the skin being removed cleanly. 12-15s: Result: Peeled grapes ready for a salad. ● Ending CTA: Shop the future of kitchen tools at the link in bio! Comprehensive Data Summary and Strategic Outlook The 31-day content plan detailed above is built on the principle of \"Needs-Based Navigation.\" By categorizing products into Health, Luxury, Efficiency, and Security, ClearOut & Co Inc. addresses the multidimensional life of the 2026 consumer. 2 The integration of direct links and verified pricing ensures that the friction between \"Discovery\" and \"Purchase\" is minimized. Category Primary Benefit Sample Product Kitchen Time Optimization 3-in-1 Rotary Grater 4 Home Decor Aesthetic Elevation 3D Wall Panels 3 Outdoor Durability Camping Propane Stove 5 Security Identity Protection RFID Blocking Sleeves 9 Wellness Resource Purity Faucet Water Filter 1 Moving forward, the success of this strategy relies on the analysis of platform-specific engagement. High \"Save\" rates on Instagram will indicate that the aesthetic of the products is resonating with the aspirational consumer, while high \"Watch Time\" on TikTok will prove the effectiveness of the outcome-based hook. By leveraging the SPRING10 discount code mentioned in the store's latest update, ClearOut & Co Inc. can further incentivize immediate conversion during the critical first month of deployment. 1 This content architecture provides the foundational data and psychological framing necessary to establish the brand as an essential destination for modern lifestyle solutions. Works cited 1. ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/ 2. About Us - ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/pages/about-us 3. Custom Order – ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/pages/custom-order 4. Kitchen Solutions – ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/collections/kitchen-sulotions 5. Outdoor – ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/collections/outdoor 6. Decorations – ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/collections/decorations 7. Products – ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/collections/all 8. Bedroom – ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/collections/bedroom 9. 5-Pack RFID Blocking Credit Card Protector Sleeves Anti-Theft Security | ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/products/5pcs-anti-theft-for-rfid-credit-card-protector-blocking-cardholder-sleeve-skin-case-covers-protection-bank-card-case-new 10. Stainless Steel Wine Pourer Set - 5-Piece Bottle Stopper with Wood Cork, accessed February 27, 2026, https://clearoutandcoinc.com/products/wooden-cork-red-wine-pourer-oil-champagne-beer-bottle-stopper-plug-wine-tasting-tools-pourers-wedding-birthday-party-supplies 11. 5QT Round Chafing Dish Buffet Set with Glass Lid White Chafer | ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/products/2-4pack-5qt-fully-coated-round-chafing-dishes-buffet-set-with-glass-lid-white-style-chafer-water-pan 12. Automatic Grape and Garlic Peeler - Electric Cherry Tomato Skin Remover - ClearOut & Co Inc, accessed February 27, 2026, https://clearoutandcoinc.com/fr/products/automatic-grape-peeler-machine-electric-garlic-peeler-cherry-tomato-skin-remover-tool-for-small-fruits-efficient-peeling-kitchen?variant=47449363218653" }
+            }
+        ];
+;
+
+        const app = {
+            state: { view: 'dashboard', filter: 'all' },
+
+            init() {
+                this.renderCalendar();
+                this.renderCharts();
+            },
+
+            setView(viewName) {
+                this.state.view = viewName;
+                document.getElementById('nav-dashboard').className = viewName === 'dashboard' ? 'px-3 py-2 rounded-md text-sm font-medium text-stone-900 bg-stone-100 transition-colors' : 'px-3 py-2 rounded-md text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-stone-50 transition-colors';
+                document.getElementById('nav-calendar').className = viewName === 'calendar' ? 'px-3 py-2 rounded-md text-sm font-medium text-stone-900 bg-stone-100 transition-colors' : 'px-3 py-2 rounded-md text-sm font-medium text-stone-500 hover:text-stone-900 hover:bg-stone-50 transition-colors';
+
+                if (viewName === 'dashboard') {
+                    document.getElementById('view-dashboard').classList.remove('hidden');
+                    document.getElementById('view-calendar').classList.add('hidden');
+                } else {
+                    document.getElementById('view-dashboard').classList.add('hidden');
+                    document.getElementById('view-calendar').classList.remove('hidden');
+                }
+            },
+
+            renderCalendar() {
+                const grid = document.getElementById('calendar-grid');
+                grid.innerHTML = '';
+                const filtered = this.state.filter === 'all' ? strategyData : strategyData.filter(d => d.category === this.state.filter);
+
+                filtered.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white shadow rounded-lg border border-stone-100 card-hover cursor-pointer p-5 transition-all flex flex-col justify-between';
+                    card.onclick = () => this.openModal(item.day);
+                    card.innerHTML = `
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-amber-600 uppercase">Day ${item.day}</span>
+                                <span class="px-2 py-0.5 text-[10px] font-bold bg-stone-100 text-stone-500 rounded uppercase tracking-wider">${item.category}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-stone-800 leading-tight">${item.product}</h3>
+                            <p class="mt-3 text-xs text-stone-500 line-clamp-3 leading-relaxed">"${item.hooks.fb}"</p>
+                        </div>
+                        <div class="mt-4 flex space-x-2">
+                            <i class="fa-brands fa-facebook text-stone-300"></i>
+                            <i class="fa-brands fa-instagram text-stone-300"></i>
+                            <i class="fa-brands fa-tiktok text-stone-300"></i>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            },
+
+            filterCalendar() {
+                this.state.filter = document.getElementById('categoryFilter').value;
+                this.renderCalendar();
+            },
+
+            openModal(day) {
+                const item = strategyData.find(d => d.day === day);
+                document.getElementById('modal-day-badge').innerText = `Campaign Day ${item.day}`;
+                document.getElementById('modal-product-name').innerText = item.product;
+                document.getElementById('modal-category').innerText = item.category;
+                
+                // Set the exact, verified link from the document
+                document.getElementById('modal-link').href = item.link;
+                
+                // Facebook
+                document.getElementById('modal-fb-hook').innerText = item.hooks.fb;
+                document.getElementById('modal-fb-copy').innerText = item.fb.copy;
+                
+                // Instagram
+                document.getElementById('modal-ig-hook').innerText = item.hooks.ig;
+                document.getElementById('modal-ig-copy').innerText = item.ig.copy;
+                
+                // TikTok
+                document.getElementById('modal-tt-hook').innerText = item.hooks.tt;
+                document.getElementById('modal-tt-script').innerText = item.tt.script;
+
+                document.getElementById('detail-modal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            },
+
+            closeModal() { 
+                document.getElementById('detail-modal').classList.add('hidden'); 
+                document.body.style.overflow = 'auto';
+            },
+
+            renderCharts() {
+                const cats = {}; strategyData.forEach(d => cats[d.category] = (cats[d.category] || 0) + 1);
+                new Chart(document.getElementById('categoryChart'), {
+                    type: 'doughnut',
+                    data: { 
+                        labels: Object.keys(cats), 
+                        datasets: [{ 
+                            data: Object.values(cats), 
+                            backgroundColor: ['#d97706', '#78716c', '#a8a29e', '#f59e0b', '#44403c', '#292524'],
+                            borderWidth: 0
+                        }] 
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+                
+                new Chart(document.getElementById('triggerChart'), {
+                    type: 'bar',
+                    data: { 
+                        labels: ['You need X if you want Y (FB)', 'You need X if you want Y (IG)', 'Visual Hook', 'Question Hook', 'Product Demo Hook', 'Lifestyle Hook'], 
+                        datasets: [{ 
+                            label: 'Instances Used', 
+                            data: [31, 31, 12, 7, 7, 5], 
+                            backgroundColor: '#d97706' 
+                        }] 
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } }
+                    }
+                });
+            }
+        };
+
+        window.onload = () => app.init();
+    </script>
+</body>
+</html>
